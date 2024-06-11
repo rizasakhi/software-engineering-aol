@@ -4,6 +4,7 @@ const bodyParser = (require('body-parser'));
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
+//middleware
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
 
@@ -16,7 +17,7 @@ const productSchema = mongoose.Schema({
     }
 })
 
-const Product = mongoose.model('Product', productSchema);
+const Product = require('./models/product')
 
 require('dotenv/config');
 
