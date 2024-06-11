@@ -10,7 +10,10 @@ app.use(morgan('tiny'));
 const productSchema = mongoose.Schema({
     name: String,
     image: String,
-    countInStock: Number
+    countInStock: {
+        type: Number,
+        required: true
+    }
 })
 
 const Product = mongoose.model('Product', productSchema);
@@ -19,17 +22,18 @@ require('dotenv/config');
 
 const api = process.env.API_URL
 
-app.get(`${api}/products`, (req, res) =>{
-    const product = {
-        id : 1,
-        name: 'riza',
-        image : 'url',
+app.get(`${api}/products`, async (req, res) =>{
+    const productList = await Product.find();
+
+    if(!productList){
+        res.status(500).json({success: false})
     }
-    res.send(product);
+    
+    res.send(productList);
 })
 
 app.post(`${api}/products`, (req, res) =>{
-    const product =  new product({
+    const product =  new Product({
         name: req.body.name,
         image: req.body.image,
         countInStock: req.body.countInStock
@@ -45,11 +49,7 @@ app.post(`${api}/products`, (req, res) =>{
     })
 })
 
-mongoose.connect(process.env.CONNECTION_STRING, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName:'watchus-database'
-})
+mongoose.connect(process.env.CONNECTION_STRING)
 .then(()=>{
     console.log('Database connection is ready..')
 })
