@@ -22,19 +22,34 @@ const api = process.env.API_URL
 app.get(`${api}/products`, (req, res) =>{
     const product = {
         id : 1,
-        name: riza,
+        name: 'riza',
         image : 'url',
     }
     res.send(product);
 })
 
 app.post(`${api}/products`, (req, res) =>{
-    const newProduct = req.body;
-    console.log(newProduct);
-    res.send(products);
+    const product =  new product({
+        name: req.body.name,
+        image: req.body.image,
+        countInStock: req.body.countInStock
+    })
+
+    product.save().then((createdProduct=>{
+        res.status(201).json(createdProduct)
+    })).catch((err)=>{
+        res.status(500).json({
+            error: err,
+            success: false
+        })
+    })
 })
 
-mongoose.connect(process.env.CONNECTION_STRING)
+mongoose.connect(process.env.CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName:'watchus-database'
+})
 .then(()=>{
     console.log('Database connection is ready..')
 })
